@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_restful import Resource, Api
 from flask import Flask, make_response, jsonify, request, session, flash
 
-from models import User
+from models import User, Exercise
 
 
 class HomePage(Resource):
@@ -94,6 +94,10 @@ class CheckSession(Resource):
 
         result = user.user_dict()
         return make_response(jsonify(result), 200)
+    
+class Exercises(Resource):
+    def get(self):
+        return make_response([e.to_dict() for e in Exercise.query.all()], 200)
 
 
 
@@ -103,6 +107,7 @@ api.add_resource(SignUp, '/signup')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+api.add_resource(Exercises, '/exercises')
 
 
 if __name__ == '__main__':
