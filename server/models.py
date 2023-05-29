@@ -32,13 +32,13 @@ class User (db.Model, SerializerMixin):
             raise ValueError('Integer values are not allowed.')
         return value
     
-    @validates('birth_date')
-    def validate_birth_date(self, key, value):
-        birth_date = datetime.strptime(value, '%Y-%m-%d')
-        age = datetime.now() - birth_date
-        if age < timedelta(days=365*18):
-            raise ValueError('User must be over 18 years old.')
-        return value
+    # @validates('birth_date')
+    # def validate_birth_date(self, key, value):
+    #     birth_date = datetime.strptime(value, '%Y-%m-%d')
+    #     age = datetime.now() - birth_date
+    #     if age < timedelta(days=365*18):
+    #         raise ValueError('User must be over 18 years old.')
+    #     return value
         
     @validates('_password_hash', 'confirm_password' )
     def validate_password(self, key, value):
@@ -74,3 +74,12 @@ class User (db.Model, SerializerMixin):
             "last_name": self.last_name,
             "birth_date": self.birth_date
         }
+    
+class Exercise (db.Model, SerializerMixin):
+    __tablename__ = 'exercises'
+
+    id = db.Column( db.Integer, primary_key = True )
+    name = db.Column( db.String, nullable = False)
+    image = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable = False)
+    muscle = db.Column(db.String, nullable = False)
