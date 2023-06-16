@@ -9,18 +9,18 @@ function Nav({handleLogout}){
     const {user} = useContext(UserContext)
 
     return(
-        <header className="z-50 bg-stone-900  fixed w-full top-0">
+        <header className="z-50 bg-stone-900  sticky w-full top-0">
             <nav className="mx-auto flex mx-w-7xl items-center justify-between h-24 gap-x-6 p-6 lg:px-8" aria-label="Global">
 				<div className="flex lg:flex-1">
                     <Link className="text-3xl font-bold leading-6 tracking-tight text-white" to="/">Spotter</Link>
 				</div>
 				<div className="hidden lg:flex lg:gap-x-12">
-                    {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/feed" >Exercises</NavLink> : null }
+                    {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/exercises" >Exercises</NavLink> : null }
                     {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/users" end>Workouts</NavLink> : null }
                     {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/profile">Profile</NavLink> : null }
 				</div>
 				<div className="flex flex-1 items-center justify-end gap-x-6">
-                {user ? <p className="hidden lg:block lg:text-lg lg:font-semibold lg:leading-6 lg:text-slate-500">Welcome, {user && user.username}</p> : null}
+                {user ? <p className="hidden lg:block lg:text-lg lg:font-semibold lg:leading-6 lg:text-slate-500">Welcome, {user && user.first_name}</p> : null}
 				{user ? (
                     <div className="flex justify-between gap-x-6">
                         <Link className="hidden lg:block lg:text-md lg:font-semibold lg:leading-6 lg:text-slate-500" to="/" onClick={handleLogout}>Logout</Link>

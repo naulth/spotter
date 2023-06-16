@@ -1,13 +1,14 @@
 from app import app
 
-from models import db, User, Exercise
+from models import db, User, Exercise, Workout
 
 if __name__ == '__main__':
     with app.app_context():
         print("Starting seed...")
 
-        User.query.delete()
+        #User.query.delete()
         Exercise.query.delete()
+        Workout.query.delete()
 
         #chest
         e1 = Exercise(name = "Dumbbell Bench Press", image = "https://www.bodybuilding.com/images/2020/xdb/originals/xdb-9e-dumbbell-bench-press-m2-16x9.jpg", description = "Lie down on a flat bench with a dumbbell in each hand resting on top of your thighs. The palms of your hands will be facing each other. Then, using your thighs to help raise the dumbbells up, lift the dumbbells one at a time so that you can hold them in front of you at shoulder width. Once at shoulder width, rotate your wrists forward so that the palms of your hands are facing away from you. The dumbbells should be just to the sides of your chest, with your upper arm and forearm creating a 90 degree angle. Be sure to maintain full control of the dumbbells at all times. This will be your starting position. Then, as you breathe out, use your chest to push the dumbbells up. Lock your arms at the top of the lift and squeeze your chest, hold for a second and then begin coming down slowly.", muscle = "chest")
@@ -68,7 +69,7 @@ if __name__ == '__main__':
         #triceps
         e25 = Exercise(name = "Triceps Dip", image = "https://www.bodybuilding.com/images/2020/xdb/originals/xdb-1m-triceps-dip-m2-16x9.jpg", description = "To get into the starting position, hold your body at arm's length with your arms nearly locked above the bars. Now, inhale and slowly lower yourself downward. Your torso should remain upright and your elbows should stay close to your body. This helps to better focus on tricep involvement. Lower yourself until there is a 90 degree angle formed between the upper arm and forearm. Then, exhale and push your torso back up using your triceps to bring your body back to the starting position.", muscle = "triceps")
 
-        e26 = Exercise(name = "EZ-Bar Skullcrusher", image ="https://www.bodybuilding.com/images/2020/xdb/originals/xdb-94s-ez-bar-skullcrusher-m2-16x9.jpg", description = "Using a close grip, lift the EZ bar and hold it with your elbows in as you lie on the bench. Your arms should be perpendicular to the floor. This will be your starting position. Keeping the upper arms stationary, lower the bar by allowing the elbows to flex. Inhale as you perform this portion of the movement. Pause once the bar is directly above the forehead. Lift the bar back to the starting position by extending the elbow and exhaling.", muscle = "tricpes")
+        e26 = Exercise(name = "EZ-Bar Skullcrusher", image ="https://www.bodybuilding.com/images/2020/xdb/originals/xdb-94s-ez-bar-skullcrusher-m2-16x9.jpg", description = "Using a close grip, lift the EZ bar and hold it with your elbows in as you lie on the bench. Your arms should be perpendicular to the floor. This will be your starting position. Keeping the upper arms stationary, lower the bar by allowing the elbows to flex. Inhale as you perform this portion of the movement. Pause once the bar is directly above the forehead. Lift the bar back to the starting position by extending the elbow and exhaling.", muscle = "triceps")
 
         e27 = Exercise(name = "Triceps Pushdown - Rope Attachment", image = "https://www.bodybuilding.com/images/2020/xdb/originals/xdb-16c-cable-rope-push-down-m2-16x9.jpg", description = "Attach a rope attachment to a high pulley and grab with a neutral grip (palms facing each other). Standing upright with the torso straight and a very small inclination forward, bring the upper arms close to your body and perpendicular to the floor. The forearms should be pointing up towards the pulley as they hold the rope with the palms facing each other. This is your starting position. Using the triceps, bring the rope down as you bring each side of the rope to the side of your thighs. At the end of the movement the arms are fully extended and perpendicular to the floor. The upper arms should always remain stationary next to your torso and only the forearms should move. Exhale as you perform this movement. After holding for a second, at the contracted position, bring the rope slowly up to the starting point. Breathe in as you perform this step.", muscle = "triceps")
 

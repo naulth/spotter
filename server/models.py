@@ -8,6 +8,7 @@ from sqlalchemy.orm import validates
 class User (db.Model, SerializerMixin):
     __tablename__ = 'users'
 
+    serialize_rules = ('-workouts', )
 
     id = db.Column( db.Integer, primary_key = True )
 
@@ -17,6 +18,8 @@ class User (db.Model, SerializerMixin):
     username = db.Column( db.String, unique = True, nullable = False)
     _password_hash = db.Column( db.String, nullable = False )
     confirm_password = db.Column(db.String, nullable = False)
+
+    workouts = db.relationship('Workout', backref='user', cascade='all, delete')
 
     @validates('username')
     def validate_username(self, key, username):
@@ -72,7 +75,8 @@ class User (db.Model, SerializerMixin):
             "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "birth_date": self.birth_date
+            "birth_date": self.birth_date,
+            "workouts": [w.to_dict() for w in self.workouts]
         }
     
 class Exercise (db.Model, SerializerMixin):
@@ -83,3 +87,23 @@ class Exercise (db.Model, SerializerMixin):
     image = db.Column(db.String, nullable = False)
     description = db.Column(db.String, nullable = False)
     muscle = db.Column(db.String, nullable = False)
+    workouts = db.relationship('WorkoutExercise', backref='exercise', lazy=True)
+
+class Workout (db.Model, SerializerMixin):
+    __tablename__ = 'workouts'
+
+    serialize_rules = ('-user', )
+
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    name = db.Column(db.String, nullable = False)
+    duration = db.Column(db.String, nullable = False)
+    exercises = db.relationship('WorkoutExercise', backref="workout", lazy = True)
+
+class WorkoutExercise (db.Model, SerializerMixin):
+    __tablename__ = 'workout_exercises'
+    id = db.Column(db.Integer, primary_key = True)
+    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable = False)
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), nullable = False)
+    sets = db.Column(db.Integer, nullable = False)
+    reps = db.Column(db.Integer, nullable = False)
