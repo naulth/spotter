@@ -8,10 +8,12 @@ import {UserProvider} from "./Context/user"
 import { ExercisesProvider } from './Context/exercises';
 import { ExerciseProvider } from './Context/exercise';
 
+
 const root = createRoot(document.getElementById('root'));
 
 root.render(
     <BrowserRouter>
+        
         <ExercisesProvider>
         <ExerciseProvider>
         <UserProvider>
@@ -19,5 +21,6 @@ root.render(
         </UserProvider>
         </ExerciseProvider>
         </ExercisesProvider>
+        
     </BrowserRouter>
 );

@@ -16,7 +16,6 @@ function Nav({handleLogout}){
 				</div>
 				<div className="hidden lg:flex lg:gap-x-12">
                     {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/exercises" >Exercises</NavLink> : null }
-                    {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/users" end>Workouts</NavLink> : null }
                     {user ? <NavLink className="text-lg font-semibold leading-6 text-white" to="/profile">Profile</NavLink> : null }
 				</div>
 				<div className="flex flex-1 items-center justify-end gap-x-6">

@@ -1,5 +1,6 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import Table, Column, Integer, ForeignKey
 from config import db, bcrypt
 from datetime import datetime, timedelta
 from sqlalchemy.orm import validates
@@ -8,7 +9,7 @@ from sqlalchemy.orm import validates
 class User (db.Model, SerializerMixin):
     __tablename__ = 'users'
 
-    serialize_rules = ('-workouts', )
+    serialize_rules = ('-workouts', '-splits',)
 
     id = db.Column( db.Integer, primary_key = True )
 
@@ -20,6 +21,7 @@ class User (db.Model, SerializerMixin):
     confirm_password = db.Column(db.String, nullable = False)
 
     workouts = db.relationship('Workout', backref='user', cascade='all, delete')
+    splits = db.relationship('Split', backref='user', cascade='all, delete')
 
     @validates('username')
     def validate_username(self, key, username):
@@ -76,34 +78,64 @@ class User (db.Model, SerializerMixin):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "birth_date": self.birth_date,
-            "workouts": [w.to_dict() for w in self.workouts]
+            "workouts": [w.to_dict() for w in self.workouts],
+            "splits": [s.to_dict() for s in self.splits]
         }
-    
+
+workout_exercise_association = Table('workout_exercise_association', db.Model.metadata,
+    Column('workout_id', Integer, ForeignKey('workouts.id')),
+    Column('exercise_id', Integer, ForeignKey('exercises.id'))    
+)
+
+split_workout_association = Table('split_workout_association', db.Model.metadata,
+    Column('split_id', Integer, ForeignKey('splits.id')),
+    Column('workout_id', Integer, ForeignKey('workouts.id'))
+
+)
+
 class Exercise (db.Model, SerializerMixin):
     __tablename__ = 'exercises'
+
+    serialize_rules = ('-workouts',)
 
     id = db.Column( db.Integer, primary_key = True )
     name = db.Column( db.String, nullable = False)
     image = db.Column(db.String, nullable = False)
     description = db.Column(db.String, nullable = False)
     muscle = db.Column(db.String, nullable = False)
-    workouts = db.relationship('WorkoutExercise', backref='exercise', lazy=True)
 
-class Workout (db.Model, SerializerMixin):
-    __tablename__ = 'workouts'
+    workouts = db.relationship(
+        'Workout', 
+        secondary=workout_exercise_association, 
+        back_populates='exercises')
 
-    serialize_rules = ('-user', )
+class Split (db.Model, SerializerMixin):
+    __tablename__ = 'splits'
+
+    serialize_rules = ('-user', '-workouts',)
 
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     name = db.Column(db.String, nullable = False)
-    duration = db.Column(db.String, nullable = False)
-    exercises = db.relationship('WorkoutExercise', backref="workout", lazy = True)
+    days = db.Column(db.Integer, nullable = False)
+    duration = db.Column(db.Integer, nullable = False)
 
-class WorkoutExercise (db.Model, SerializerMixin):
-    __tablename__ = 'workout_exercises'
+    workouts = db.relationship('Workout', secondary='split_workout_association', back_populates='splits')
+
+class Workout (db.Model, SerializerMixin):
+    __tablename__ = 'workouts'
+
+    serialize_rules = ('-user', '-splits', '-exercises',)
+
     id = db.Column(db.Integer, primary_key = True)
-    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'), nullable = False)
-    exercise_id = db.Column(db.Integer, db.ForeignKey('exercises.id'), nullable = False)
-    sets = db.Column(db.Integer, nullable = False)
-    reps = db.Column(db.Integer, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    name = db.Column(db.String, nullable = False)
+
+    splits = db.relationship('Split', secondary='split_workout_association', back_populates='workouts')
+
+    exercises = db.relationship(
+        'Exercise', 
+        secondary='workout_exercise_association', 
+        back_populates='workouts')
+
+

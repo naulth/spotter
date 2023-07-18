@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_restful import Resource, Api
 from flask import Flask, make_response, jsonify, request, session, flash
 
-from models import User, Exercise, Workout
+from models import User, Exercise, Workout, Split
 
 
 class HomePage(Resource):
@@ -106,6 +106,24 @@ class ExerciseByID(Resource):
 
         return make_response((Exercise.query.filter(Exercise.id==id).first()).to_dict(), 200)
 
+class ExerciseByWorkout(Resource):
+    def get(self):
+        pass
+
+    def post(self):
+        data = request.get_json()
+
+        workout_id = data['workout_id']
+        exercise_id = data['exercise_id']
+
+        workout = Workout.query.filter(Workout.id==workout_id).first()
+        exercise = Exercise.query.filter(Exercise.id==exercise_id).first()
+
+        workout.exercises.append(exercise)
+
+        db.session.commit()
+
+
 class Workouts(Resource):
     def get(self):
         return make_response([w.to_dict() for w in Workout.query.all()], 200)
@@ -116,14 +134,31 @@ class Workouts(Resource):
 
         new_workout = Workout(
             user_id=data['user_id'],
-            name=data['name'],
-            duration=data['duration']
+            name=data['name']
         )
         db.session.add(new_workout)
         db.session.commit()
 
         return make_response(new_workout.to_dict(), 201)
 
+class Splits(Resource):
+    def get(self):
+        return make_response([s.to_dict() for s in Split.query.all()], 200)
+    
+    def post(self):
+
+        data = request.get_json()
+
+        new_split = Split(
+            user_id=data['user_id'],
+            name=data['name'],
+            days=data['days'],
+            duration=data['duration']
+        )
+        db.session.add(new_split)
+        db.session.commit()
+
+        return make_response(new_split.to_dict(), 201)
 
 api.add_resource(HomePage, '/')
 api.add_resource(SignUp, '/signup')
@@ -133,6 +168,8 @@ api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Exercises, '/exercises')
 api.add_resource(ExerciseByID, '/exercises/<int:id>')
 api.add_resource(Workouts, '/workouts')
+api.add_resource(Splits, '/splits')
+api.add_resource(ExerciseByWorkout, '/workouts/add-exercise')
 
 
 if __name__ == '__main__':

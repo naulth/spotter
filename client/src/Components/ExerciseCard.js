@@ -1,6 +1,8 @@
 import React from 'react'
 import {Outlet, Link} from 'react-router-dom'
 
+import AddToWorkout from './AddToWorkout'
+
 function ExerciseCard({id, name, image, description, muscle}) {
 
     const linkURL = `/exercises/${id}`
@@ -14,7 +16,8 @@ function ExerciseCard({id, name, image, description, muscle}) {
             </div>
             <button className="hover:bg-zinc-800 hover:text-lime-100 text-lime-200 border mt-4 border-lime-100 shadow font-bold px-4 rounded mx-2">
                     <Link to={linkURL}>View Exercise</Link> 
-                </button> 
+            </button>
+            <AddToWorkout exercise_id={id}/> 
            <Outlet />
         </div>
 

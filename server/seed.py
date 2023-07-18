@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
         #User.query.delete()
         Exercise.query.delete()
-        Workout.query.delete()
+        #Workout.query.delete()
 
         #chest
         e1 = Exercise(name = "Dumbbell Bench Press", image = "https://www.bodybuilding.com/images/2020/xdb/originals/xdb-9e-dumbbell-bench-press-m2-16x9.jpg", description = "Lie down on a flat bench with a dumbbell in each hand resting on top of your thighs. The palms of your hands will be facing each other. Then, using your thighs to help raise the dumbbells up, lift the dumbbells one at a time so that you can hold them in front of you at shoulder width. Once at shoulder width, rotate your wrists forward so that the palms of your hands are facing away from you. The dumbbells should be just to the sides of your chest, with your upper arm and forearm creating a 90 degree angle. Be sure to maintain full control of the dumbbells at all times. This will be your starting position. Then, as you breathe out, use your chest to push the dumbbells up. Lock your arms at the top of the lift and squeeze your chest, hold for a second and then begin coming down slowly.", muscle = "chest")
