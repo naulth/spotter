@@ -1,8 +1,11 @@
 import React from 'react'
+import {Outlet, Link} from 'react-router-dom'
 
 
 
-function WorkoutCard({id, name}) {
+function WorkoutCard({id, name, exercises}) {
+
+    const linkURL = `/workouts/${id}`
 
     return (
 
@@ -10,8 +13,12 @@ function WorkoutCard({id, name}) {
             <div className="px-2">
                 <h1 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>{name}</h1>
             </div>
-            
-            {/* <button className="text-white">Add an Exercise</button> */}
+            <div>
+                <button className="text-center bg-gray-800 hover:bg-sky-950 hover:text-lime-200 text-sm w-36 text-lime-200 border border-lime-200 shadow font-bold py-1 px-2 rounded my-1">
+                    <Link to={linkURL}>View Workout</Link>
+                </button>
+                <Outlet />
+            </div>
         </div>
 
     )

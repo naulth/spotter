@@ -112,7 +112,7 @@ class Exercise (db.Model, SerializerMixin):
 class Split (db.Model, SerializerMixin):
     __tablename__ = 'splits'
 
-    serialize_rules = ('-user', '-workouts',)
+    serialize_rules = ('-user',)
 
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
@@ -125,7 +125,7 @@ class Split (db.Model, SerializerMixin):
 class Workout (db.Model, SerializerMixin):
     __tablename__ = 'workouts'
 
-    serialize_rules = ('-user', '-splits', '-exercises',)
+    serialize_rules = ('-user', '-splits',)
 
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)

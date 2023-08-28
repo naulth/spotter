@@ -8,11 +8,11 @@ function AddToWorkout({exercise_id}) {
     
     const {user, setUser} = useContext(UserContext)
 
-    const formSchema = yup.object().shape({
-        workouts: yup
-        .number()
-        .required('Required'),
-    })
+    // const formSchema = yup.object().shape({
+    //     workouts: yup
+    //     .number()
+    //     .required('Required'),
+    // })
 
     const formik = useFormik({
         initialValues: {
@@ -20,7 +20,7 @@ function AddToWorkout({exercise_id}) {
             exercise_id: exercise_id
         },
         enableReinitialize: true,
-        validationSchema: formSchema,
+        // validationSchema: formSchema,
         onSubmit: (values) => {
             fetch("/workouts/add-exercise", {
                 method: "POST",
@@ -28,19 +28,38 @@ function AddToWorkout({exercise_id}) {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(values),
-            }).then((response) => {
+            })
+            .then((response) => {
                 if (response.ok) {
-                    response.json().then((response) => {
-                        const newUser= {
-                            ...user,
-                            workouts: [
-                                ...user?.workouts, response
-                            ]
-                        }
-                        setUser(newUser)
-                    })
+                  return response.json();
+                } else {
+                  throw new Error('Failed to add exercise to workout');
                 }
             })
+            .then((updatedWorkout) => {
+                // Find the index of the old workout in the user's workouts array
+                const workoutIndex = user.workouts.findIndex(
+                    (workout) => workout.id === updatedWorkout.id
+                );
+      
+                if (workoutIndex !== -1) {
+                  // Create a new array with the updated workout
+                    const updatedWorkouts = [
+                        ...user.workouts.slice(0, workoutIndex), // Before the updated workout
+                        updatedWorkout, // The updated workout
+                        ...user.workouts.slice(workoutIndex + 1), // After the updated workout
+                    ];
+      
+                  // Update the user state with the new workouts array
+                    setUser((prevUser) => ({
+                        ...prevUser,
+                        workouts: updatedWorkouts,
+                    }));
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
             toggleAddToWorkout()
         }
     })
@@ -68,14 +87,14 @@ function AddToWorkout({exercise_id}) {
 						<div className="mt-2 pb-2">
 							<select
 								type="select"
-								name="workouts"
-								value={formik.values.workout}
+								name="workout_id"
+								value={formik.values.workout_id}
                                 onChange={formik.handleChange}
 								className="block w-full bg-lime-100 rounded-md border-0 px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 							>
                                 <option value="">Select a workout...</option>
                                 {user?.workouts?.map(workout => (
-                                    <option key={workout.id} value={workout.id}>{workout.name}</option>
+                                    <option key={workout?.id} value={workout?.id}>{workout?.name}</option>
                                 ))}
                             </select>
 							<p className="formikReqs"> {formik.errors.workout}</p>

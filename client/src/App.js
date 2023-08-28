@@ -7,6 +7,10 @@ import Signup from './Components/Signup'
 import Exercises from './Components/Exercises'
 import ExercisePage from './Components/ExercisePage'
 import Profile from './Components/Profile'
+import WorkoutPage from './Components/WorkoutPage'
+import SplitPage from './Components/SplitPage'
+
+
 import {UserContext} from "./Context/user"
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -15,7 +19,7 @@ library.add(faEye,faEyeSlash)
 
 function App() {
 
-    const {user, setUser} = useContext(UserContext)
+    const {setUser} = useContext(UserContext)
 
     function handleLogout() {
         
@@ -38,7 +42,7 @@ function App() {
                 response.text().then(console.warn)
             }
         });
-    }, []);
+    }, [setUser]);
 
   return (
     <div className="">
@@ -50,6 +54,8 @@ function App() {
         <Route path="/exercises" element={<Exercises />} />
         <Route path='/exercises/:exerciseId' element={<ExercisePage />} />
         <Route path='/profile' element={<Profile />} />
+        <Route path='workouts/:workoutId' element={<WorkoutPage />} />
+        <Route path='splits/:splitId' element={<SplitPage />} />
       </Routes>
     </div>
   );

@@ -9,11 +9,12 @@ import { UserContext } from "../Context/user"
 
 function Profile() {
 
-    const {user, setUser} = useContext(UserContext)
+    const {user} = useContext(UserContext)
 
     const userSplits = user?.splits?.map(split => <SplitCard key={split.id} id={split.id} name={split.name} days={split.days} duration={split.duration} />)
 
-    const userWorkouts = user?.workouts?.map(workout => <WorkoutCard key={workout.id} id={workout.id} name={workout.name} />)
+    const userWorkouts = user?.workouts?.map(workout => <WorkoutCard key={workout.id} id={workout.id} name={workout.name} exercises={workout.exercises} />)
+
 
     return(
         <div>

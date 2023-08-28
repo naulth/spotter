@@ -1,8 +1,8 @@
 """rebuilding models
 
-Revision ID: 758cf9d7d1e0
+Revision ID: 6cca38cd2eaa
 Revises: 
-Create Date: 2023-07-17 21:15:50.356451
+Create Date: 2023-07-18 02:06:58.967875
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '758cf9d7d1e0'
+revision = '6cca38cd2eaa'
 down_revision = None
 branch_labels = None
 depends_on = None

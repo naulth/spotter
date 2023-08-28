@@ -10,6 +10,7 @@ class HomePage(Resource):
     def get(self):
         return {'message': '200: Welcome to our Home Page'}, 200
     
+    
 @app.before_request
 def check_if_logged_in():
     logged_in = session.get('user_id')
@@ -18,6 +19,7 @@ def check_if_logged_in():
     
     if not logged_in and not signing_up and not logging_in:
         return make_response ( {'message': 'please log in'}, 401 )
+
 
 class SignUp(Resource):
 
@@ -52,6 +54,7 @@ class SignUp(Resource):
 
         return { 'message': 'User Created Successfully'}
 
+
 class Login(Resource):
 
     def post(self):
@@ -76,6 +79,7 @@ class Login(Resource):
         else:
             return {'error': 'Invalid username or password'}, 401
     
+
 class Logout(Resource):
 
     def delete(self):
@@ -87,6 +91,7 @@ class Logout(Resource):
         session['user_id'] = None
         return {}, 204
     
+
 class CheckSession(Resource):
 
     def get(self):
@@ -95,16 +100,19 @@ class CheckSession(Resource):
         result = user.user_dict()
         return make_response(jsonify(result), 200)
     
+
 class Exercises(Resource):
     def get(self):
         return make_response([e.to_dict() for e in Exercise.query.all()], 200)
     
+
 class ExerciseByID(Resource):
     def get(self, id):
         if id not in [e.id for e in Exercise.query.all()]:
             return {'error': '404, Exercise not Found!'}, 404
 
         return make_response((Exercise.query.filter(Exercise.id==id).first()).to_dict(), 200)
+
 
 class ExerciseByWorkout(Resource):
     def get(self):
@@ -123,6 +131,35 @@ class ExerciseByWorkout(Resource):
 
         db.session.commit()
 
+        return make_response(workout.to_dict())
+    
+
+class RemoveExerciseFromWorkout(Resource):
+    def get(self):
+        pass
+    
+    def delete(self, id):
+        data = request.get_json()
+
+        user = User.query.filter(User.id == session.get('user_id')).first()
+
+        workout= Workout.query.filter_by(id=id, user_id = user.id ).first()
+        if not workout:
+            return {'error': "404, Workout not found or doesn't belong to the current user"}, 404
+
+        exercise_id = data['exercise_id']
+        if not exercise_id:
+            return {'error': "400, Exercise ID not provided"}, 400
+        
+        exercise = Exercise.query.get(exercise_id)
+        if not exercise:
+            return {'error': "404, Exercise not found"}, 404
+        
+        workout.exercises.remove(exercise)
+        db.session.commit()
+
+        return make_response({'message': 'The exercise has been removed'}, 200)
+
 
 class Workouts(Resource):
     def get(self):
@@ -140,6 +177,49 @@ class Workouts(Resource):
         db.session.commit()
 
         return make_response(new_workout.to_dict(), 201)
+    
+
+class WorkoutById(Resource):
+    def get(self,id):
+        pass
+
+    def patch(self, id):
+        data = request.get_json()
+
+        user = User.query.filter(User.id == session.get('user_id')).first()
+
+        workout= Workout.query.filter_by(id=id, user_id = user.id ).first()
+        if not workout:
+            return {'error': "404, Workout not found or doesn't belong to the current user"}, 404
+        
+        for key in data.keys():
+            setattr(workout, key, data[key])
+
+        db.session.add(workout)
+        db.session.commit()
+
+        return make_response(workout.to_dict(), 200)
+    
+    def delete(self, id):
+
+        user = User.query.filter(User.id == session.get('user_id')).first()
+
+        workout= Workout.query.filter_by(id=id, user_id = user.id ).first()
+        if not workout:
+            return {'error': "404, Workout not found or doesn't belong to the current user"}, 404
+        
+        try:
+            db.session.delete(workout)
+            db.session.commit()
+            return make_response({'message': 'The workout has been deleted'}, 200)
+        
+        except Exception as e:
+            db.session.rollback()
+            return make_response({'error': 'An error occurred while deleting the workout.'}, 500)
+        
+        
+
+
 
 class Splits(Resource):
     def get(self):
@@ -170,6 +250,8 @@ api.add_resource(ExerciseByID, '/exercises/<int:id>')
 api.add_resource(Workouts, '/workouts')
 api.add_resource(Splits, '/splits')
 api.add_resource(ExerciseByWorkout, '/workouts/add-exercise')
+api.add_resource(RemoveExerciseFromWorkout, '/workouts/remove-exercise/<int:id>')
+api.add_resource(WorkoutById, '/workouts/<int:id>')
 
 
 if __name__ == '__main__':
